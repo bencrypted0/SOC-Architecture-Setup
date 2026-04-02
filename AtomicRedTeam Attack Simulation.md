@@ -1,17 +1,3 @@
----
-tags:
-  - Attacks
-  - AtomicRedTeam
-  - Simulation
-  - MITRE
-  - ATTCK
-Type:
-  - NOTES
-Priority:
-  - HIGH
-Note Status:
-  - Pending
----
 ### Recommended Commands (Run One by One)
 
 **1. Command & Scripting Interpreter (T1059) – PowerShell & CMD execution**

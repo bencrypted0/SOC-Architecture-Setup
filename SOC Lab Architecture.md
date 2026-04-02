@@ -1,16 +1,4 @@
----
-tags:
-  - architecture
-  - SOC
-  - SIEM
-  - SOAR
-Type:
-  - NOTES
-Priority:
-  - HIGH
-Note Status:
-  - Completed
----
+
 # SOC Lab Architecture & Automation Build
 
 **Project Plan v1.0** · Open Source Tooling · Cloud + Local Hybrid · End-to-End Detection & Response
