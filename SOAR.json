@@ -1,0 +1,1125 @@
+{
+  "name": "SOAR",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d132c923-7190-494d-bfd7-07d8efb52789",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2976,
+        -768
+      ],
+      "id": "40cd27f4-0bbd-42a8-b545-97f63688e619",
+      "name": "Webhook",
+      "webhookId": "d132c923-7190-494d-bfd7-07d8efb52789"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3fbc5d27-c984-4506-afb2-83785b672df0",
+              "name": "timestamp",
+              "value": "={{ $json.body.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "17143b94-caea-4a12-8e7a-a788e492666b",
+              "name": "rule.level",
+              "value": "={{ $json.body.all_fields.rule.level }}",
+              "type": "number"
+            },
+            {
+              "id": "28fd32d8-8246-40bd-afc8-621f660e4b33",
+              "name": "rule.id",
+              "value": "={{ $json.body.all_fields.rule.id }}",
+              "type": "string"
+            },
+            {
+              "id": "ad46e16b-16e2-4ced-a9a9-35f2524a8d7a",
+              "name": "rule.description",
+              "value": "={{ $json.body.all_fields.rule.description }}",
+              "type": "string"
+            },
+            {
+              "id": "5d169f7d-d437-4f20-8b13-018229fe74e7",
+              "name": "mitre.id",
+              "value": "={{ $json.body.all_fields.rule.mitre.id }}",
+              "type": "array"
+            },
+            {
+              "id": "d28a0863-9230-4a7e-80cd-6253829e4f59",
+              "name": "mitre.technique",
+              "value": "={{ $json.body.all_fields.rule.mitre.technique }}",
+              "type": "array"
+            },
+            {
+              "id": "a9ac2e4e-a77a-4bec-9056-8da39c4e900f",
+              "name": "mitre.tactic",
+              "value": "={{ $json.body.all_fields.rule.mitre.tactic }}",
+              "type": "array"
+            },
+            {
+              "id": "0fd1e4a6-207b-42d1-a482-0ee007cfdf0f",
+              "name": "rule.groups",
+              "value": "={{ $json.body.all_fields.rule.groups }}",
+              "type": "array"
+            },
+            {
+              "id": "b7480e24-01ec-4bad-881a-cf7f71065fa1",
+              "name": "agent.id",
+              "value": "={{ $json.body.all_fields.agent.id }}",
+              "type": "string"
+            },
+            {
+              "id": "fc110b92-de73-4686-89ac-fafc20e31cf0",
+              "name": "agent.name",
+              "value": "={{ $json.body.all_fields.agent.name }}",
+              "type": "string"
+            },
+            {
+              "id": "0c6989c7-d711-4ae4-b340-c27693cd534d",
+              "name": "agent.ip",
+              "value": "={{ $json.body.all_fields.agent.ip }}",
+              "type": "string"
+            },
+            {
+              "id": "a8bdab85-7572-4ae2-b7e6-3b59072e8af3",
+              "name": "body.all_fields.data.win.eventdata",
+              "value": "={{ $json.body.all_fields.data.win.eventdata }}",
+              "type": "object"
+            },
+            {
+              "id": "ef147e1b-916e-4af1-9509-d392656030a3",
+              "name": "body.id",
+              "value": "={{ $json.body.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2416,
+        -768
+      ],
+      "id": "d8c80a7f-a002-44e1-817e-40ebaac6bc63",
+      "name": "Normalize"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-lite-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        176,
+        32
+      ],
+      "id": "81974eed-3ebb-4239-9cbf-fbc9df5cf607",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HLXppzE6FfLQTYc3",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"risk_score\": 100,\n  \"severity_tier\": \"Critical\",\n  \"incident_summary\": \"1-2 sentence short summary\",\n  \"mitre_technique\": \"Txxxx - Technique Name\",\n  \"action\": \"create_jira_ticket\",\n  \"jira_priority\": \"Highest\",\n  \"why_this_score\": \"short 1-sentence justification\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -2352,
+        -160
+      ],
+      "id": "2d2a2fef-fe78-467f-9456-78717bb6d0b1",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://bennetsharwin.atlassian.net/rest/api/3/issue",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Basic YmVubmV0c2hhcndpbjc2QGdtYWlsLmNvbTpBVEFUVDN4RmZHRjB2NDlaSzBNdHZyWXYwdDRvQmFtM3kwdHllOVlER2tvY2gySlJLbmt1VWtmTjBGLXFKZkpLNXVlT2dGNEFhVDVTZ1VlX1RxMG9zRV9SQUtLbmlCMlVUN0hWZm9keEdDUkM5eGpxYlJndWF5azhZLXdhdUQ5TGNyY055LUJYbU9iRERmeVVmM2dfem1OaVZ5TmE0NkVWazZhRjR3WjNlS1pSdjdpSFhaV2tfNW89NkYxNzY3MUY="
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"fields\": {\n    \"project\": {\n      \"key\": \"OPS\"\n    },\n    \"issuetype\": {\n      \"name\": \"Task\"\n    },\n    \"summary\": \"{{ $json.output.title }}\",\n    \"description\": {\n      \"version\": 1,\n      \"type\": \"doc\",\n      \"content\": [\n        {\n          \"type\": \"paragraph\",\n          \"content\": [\n            {\n              \"type\": \"text\",\n              \"text\": \"{{ ($json.output.Description) }}\"\n            }\n          ]\n        }\n      ]\n    },\n    \"customfield_10072\": {\n      \"id\": \"10020\"\n    },\n    \"reporter\": {\n      \"accountId\": \"712020:ae8c5e4a-c864-40bc-831e-9ff046f30aa3\"\n    },\n    \"customfield_10114\": \"{{ $json.timestamp }}\",\n    \"customfield_10074\": {{ $json.rule.level }},\n    \"customfield_10079\": \"{{ $json.rule.id }}\",\n    \"customfield_10080\": {{ $json.body.id }},\n    \"customfield_10073\": \"{{ $json.agent.ip }}\",\n    \"customfield_10078\": \"Wazuh SIEM\",\n    \"customfield_10076\": \"{{ $json.mitre.technique }}\",\n    \"customfield_10077\": \"{{ $json.mitre.tactic[0] }}\",\n    \"customfield_10147\": {\n      \"version\": 1,\n      \"type\": \"doc\",\n      \"content\": [\n        {\n          \"type\": \"paragraph\",\n          \"content\": [\n            {\n              \"type\": \"text\",\n              \"text\": \"{{ $json.output.Recommendation }}\"\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        512,
+        -944
+      ],
+      "id": "d817826e-46b2-4ca8-a244-c30264d58695",
+      "name": "Create Jira Ticket"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"title\": \"\",\n  \"Description\": \"\",\n  \"Recommendation\": \"\",\n  \"POC\":\"\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -2176,
+        -160
+      ],
+      "id": "830dc7e0-079d-401f-8551-7150f787bfb6",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5d795635-3aeb-4b53-ab75-4ee7d1b80b82",
+              "name": "output",
+              "value": "={{ $('Risk Scoring').item.toJsonString() }}",
+              "type": "string"
+            },
+            {
+              "id": "f3bd9956-fd0e-45d8-8b3f-43ebaff9c3df",
+              "name": "timestamp",
+              "value": "={{ $('Normalize').item.json.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "943a27f8-5a5d-4c06-840f-58c1c4954e66",
+              "name": "rule",
+              "value": "={{ $('Normalize').item.json.rule.toJsonString() }}",
+              "type": "string"
+            },
+            {
+              "id": "daba23d4-b656-4b4d-bab9-0acfddf2357b",
+              "name": "mitre",
+              "value": "={{ $('Normalize').item.json.mitre }}",
+              "type": "string"
+            },
+            {
+              "id": "65791038-414f-4b83-9317-b9fafc33d4be",
+              "name": "agent",
+              "value": "={{ $('Normalize').item.json.agent.toJsonString() }}",
+              "type": "string"
+            },
+            {
+              "id": "861753df-cac7-4574-8a3f-e6a9fd2258b2",
+              "name": "body",
+              "value": "={{ $('Normalize').item.json.body.toJsonString() }}",
+              "type": "string"
+            },
+            {
+              "id": "ff8c3210-9c20-4314-a79e-fe610d01fd9d",
+              "name": "POCs",
+              "value": "={{ $('Normalize #2').all().toJsonString() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -656,
+        -768
+      ],
+      "id": "f90d2327-5d25-45aa-94fd-39e5b8f5606d",
+      "name": "Normalize Risk scores"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}\n\n{{ $json.rule }}\n\n{{ $json.mitre }}\n\n{{ $json.agent }}\n\n{{ $json.body }}\n\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a SOC analyst creating a Jira ticket description from security alert data.\n\nInput fields:\n- Severity: <as in regular prompt>\n- Risk Score: <as in regular prompt>\n- Affected Host: <as in regular prompt>\n- Source: <as in regular prompt>\n- Rule ID: <as in regular prompt>\n- Alert ID: <as in regular prompt>\n- MITRE Tactic: <as in regular prompt>\n- MITRE Technique: <as in regular prompt>\n- Resolution: <as in regular prompt>\n\nGenerate Alert description (JSON format) with:\nboth concise paragraph with no more than 50 words, but includes all the necessary details about that alert.\n\n# Escaping Charactors\n\nEscape all special characters in the output so it can be safely sent to Jira. Jira requires every special character (\", ', , :, ;, [, ], {, }, (, ), =, +, ~, !, @, #, $, %, ^, &, <, >, /, ?, ., ,, -, etc.) to be escaped with exactly two backslashes in front of it.\nExamples:\n\n\"  must become  \\\\\"\n'  must become  \\\\'\n\\  must become  \\\\ (so a single backslash becomes three characters: \\\\\\)\n:  must become  \\\\:\n\n\n\nOutput ONLY valid JSON:\n{\n  \"title\":\"<alert title>\",\n  \"Description\": \"\",\n  \"Recommendation\": \"\",\n  \"POC\":\"\"\n}\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -464,
+        -768
+      ],
+      "id": "6f477b24-6405-490e-ae53-7a556012c80f",
+      "name": "Summarization"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0a21d103-1b34-49c2-8902-742c768db56b",
+                    "leftValue": "={{ $('Risk Scoring').item.json.output.severity_tier }}",
+                    "rightValue": "Critical",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CRITICAL"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Risk Scoring').item.json.output.severity_tier }}",
+                    "rightValue": "High",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "86d9e72e-01c3-4fc3-aaa5-272d5823f077"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HIGH"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "325b7376-a1e0-45d0-8555-4b512f135778",
+                    "leftValue": "={{ $('Risk Scoring').item.json.output.severity_tier }}",
+                    "rightValue": "Medium",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "MEDIUM"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "70793554-e63a-461e-8cdd-cada0a1710d3",
+                    "leftValue": "={{ $('Risk Scoring').item.json.output.severity_tier }}",
+                    "rightValue": "Low",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LOW"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        96,
+        -800
+      ],
+      "id": "9d7cd9b9-8609-4dbc-9867-2cc852a3e18f",
+      "name": "Severity Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5d795635-3aeb-4b53-ab75-4ee7d1b80b82",
+              "name": "output",
+              "value": "={{ $json.output.toJsonString() }}",
+              "type": "object"
+            },
+            {
+              "id": "f3bd9956-fd0e-45d8-8b3f-43ebaff9c3df",
+              "name": "timestamp",
+              "value": "={{ $('Normalize').item.json.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "943a27f8-5a5d-4c06-840f-58c1c4954e66",
+              "name": "rule",
+              "value": "={{ $('Normalize').item.json.rule.toJsonString() }}",
+              "type": "object"
+            },
+            {
+              "id": "daba23d4-b656-4b4d-bab9-0acfddf2357b",
+              "name": "mitre",
+              "value": "={{ $('Normalize').item.json.mitre }}",
+              "type": "object"
+            },
+            {
+              "id": "65791038-414f-4b83-9317-b9fafc33d4be",
+              "name": "agent",
+              "value": "={{ $('Normalize').item.json.agent }}",
+              "type": "object"
+            },
+            {
+              "id": "861753df-cac7-4574-8a3f-e6a9fd2258b2",
+              "name": "body",
+              "value": "={{ $('Normalize').item.json.body }}",
+              "type": "object"
+            },
+            {
+              "id": "6c44bbf9-d414-42ae-90e8-763f17452b06",
+              "name": "POC",
+              "value": "={{ $json.output.POC }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -128,
+        -768
+      ],
+      "id": "3d17b05e-e320-43f9-84ff-86feb48c8f07",
+      "name": "Final Normalization"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0ANGSE2ESV",
+          "mode": "list",
+          "cachedResultName": "soc-alerts"
+        },
+        "text": "=🚨 🚨 🚨 🚨 ALERT 🚨 🚨 🚨 🚨 \n\nTitle\n{{ $json.output.title }}\n\nDescription\n{{ $json.output.Description }}\n\nTime: {{ $json.timestamp }}\nAlert ID: {{ $json.body.id }}\n\nDevice Details\nDevice ID: {{ $json.agent.id }}\nDevice Name: {{ $json.agent.name }}\nDevice IP: {{ $json.agent.ip }}\n\nRule Level: {{ $json.rule.level }}\nRule ID: {{ $json.rule.id }}\nRule Description: {{ $json.rule.description }}\n\nMITRE Technique: {{ $json.mitre.technique }}\nMITRE Tactic: {{ $json.mitre.tactic[0] }}\n\nProcess ID: {{ $json.body.all_fields.data.win.eventdata.processId }}\nFile: {{ $json.body.all_fields.data.win.eventdata.image }}\nUser: {{ $json.body.all_fields.data.win.eventdata.user }}\n\nRecommendation\n{{ $json.output.Recommendation }}\n\n",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        512,
+        -608
+      ],
+      "id": "9786db8c-4fc7-4d9e-874b-9a1883a5b0ca",
+      "name": "Send Slack Message",
+      "webhookId": "080910f4-a626-4d8e-8e38-d7436aa090b6",
+      "credentials": {
+        "slackApi": {
+          "id": "JGdeIqTDETatHEpf",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-8b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        0,
+        32
+      ],
+      "id": "084db219-0732-4703-ad1c-1d88899d4f9f",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "nFtRrRknBhWLrHID",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  { \"type\": \"ipv4\", \"value\": \"192.168.1.100\" },\n  { \"type\": \"domain\", \"value\": \"malicious.example.com\" },\n  { \"type\": \"sha256\", \"value\": \"abc123...\" },\n  { \"type\": \"url\", \"value\": \"http://...\" }\n]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -2512,
+        -160
+      ],
+      "id": "0f834cf4-43ca-4d94-81de-9bb1899f4c29",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1904,
+        -768
+      ],
+      "id": "4687b0f3-0e3f-431e-b1b5-562f08824627",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "curlImport": "",
+        "httpVariantWarning": "",
+        "method": "GET",
+        "url": "=https://www.virustotal.com/api/v3/files/{{ $json.value }}",
+        "": "",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "virusTotalApi",
+        "provideSslCertificates": false,
+        "sendQuery": false,
+        "sendHeaders": false,
+        "sendBody": false,
+        "options": {},
+        "infoMessage": ""
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1472,
+        -768
+      ],
+      "id": "0aa087ec-c055-46dd-9b2a-5b5bf8349825",
+      "name": "Hash",
+      "extendsCredential": "virusTotalApi",
+      "credentials": {
+        "virusTotalApi": {
+          "id": "fBSGWNIf5OmQr7Uy",
+          "name": "VirusTotal account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "curlImport": "",
+        "httpVariantWarning": "",
+        "method": "GET",
+        "url": "=https://www.virustotal.com/api/v3/ip_addresses/{{ $json.value }}",
+        "": "",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "virusTotalApi",
+        "provideSslCertificates": false,
+        "sendQuery": false,
+        "sendHeaders": false,
+        "sendBody": false,
+        "options": {},
+        "infoMessage": ""
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1472,
+        -912
+      ],
+      "id": "182c33ea-6df5-44d9-9841-30610c2e62d3",
+      "name": "IP",
+      "extendsCredential": "virusTotalApi",
+      "credentials": {
+        "virusTotalApi": {
+          "id": "fBSGWNIf5OmQr7Uy",
+          "name": "VirusTotal account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "curlImport": "",
+        "httpVariantWarning": "",
+        "method": "GET",
+        "url": "=https://www.virustotal.com/api/v3/domains/{{ $json.value }}",
+        "": "",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "virusTotalApi",
+        "provideSslCertificates": false,
+        "sendQuery": false,
+        "sendHeaders": false,
+        "sendBody": false,
+        "options": {},
+        "infoMessage": ""
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1472,
+        -608
+      ],
+      "id": "3719e2cb-a50a-4f5a-9095-df292730004c",
+      "name": "Domains",
+      "extendsCredential": "virusTotalApi",
+      "credentials": {
+        "virusTotalApi": {
+          "id": "fBSGWNIf5OmQr7Uy",
+          "name": "VirusTotal account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "ip",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "08c4994e-d261-425d-8654-94875b69c273"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "IP"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "97d812a4-3480-4dc1-b7f1-537f6765c3e9",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "=^(md5|sha1|sha256)$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hash"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7f186517-b72c-4601-8400-a479154aedc6",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "domain",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Domain"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1728,
+        -784
+      ],
+      "id": "f6ff8ae4-1a7e-4341-bcbf-3d4a1dad1e64",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an IoC extractor. Given the full alert JSON below, extract EVERY indicator of compromise.\n\nReturn ONLY a JSON array called \"iocs\" with objects like:\n[\n  { \"type\": \"ipv4\", \"value\": \"192.168.1.100\" },\n  { \"type\": \"domain\", \"value\": \"malicious.example.com\" },\n  { \"type\": \"sha256\", \"value\": \"abc123...\" },\n  { \"type\": \"url\", \"value\": \"http://...\" }\n]\n\nPossible types: ipv4, ipv6, domain, url, md5, sha1, sha256, email.\nOnly include real IoCs — ignore version numbers, internal paths, etc.\nAlert JSON:"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -2208,
+        -768
+      ],
+      "id": "fa2422cc-a964-42cd-83b3-c7e71fc11353",
+      "name": "POC Deriver"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "284b9e40-e14e-4981-b44b-8fd8bfc99f4a",
+              "name": "hash.link",
+              "value": "={{ $json.data.links.self }}",
+              "type": "string"
+            },
+            {
+              "id": "cac37e72-f01c-4ec0-9e98-78b999ecf948",
+              "name": "hash.malware",
+              "value": "={{ $json.data.attributes.sandbox_verdicts.Zenbox.malware_classification }}",
+              "type": "string"
+            },
+            {
+              "id": "d326b371-f120-4150-b8b6-8eb285b68e3c",
+              "name": "hash.name",
+              "value": "={{ $json.data.attributes.meaningful_name }}",
+              "type": "string"
+            },
+            {
+              "id": "ad60666c-71d2-430f-893a-8b78cd5111d4",
+              "name": "ip.id",
+              "value": "={{ $json.data.id }}",
+              "type": "string"
+            },
+            {
+              "id": "c5b34b0d-1dac-481b-82df-3341d559ccf3",
+              "name": "ip.link",
+              "value": "={{ $json.data.links.self }}",
+              "type": "string"
+            },
+            {
+              "id": "755cf628-53c4-413f-9eb3-a0399569a072",
+              "name": "ip.malicious",
+              "value": "={{ $json.data.attributes.total_votes.malicious }}",
+              "type": "number"
+            },
+            {
+              "id": "b3472571-2e6f-498a-9e20-9d0764b47d94",
+              "name": "domain.name",
+              "value": "={{ $json.data.id }}",
+              "type": "string"
+            },
+            {
+              "id": "2c481f6b-b3b3-412b-addb-6504350a8330",
+              "name": "domain.link",
+              "value": "={{ $json.data.links.self }}",
+              "type": "string"
+            },
+            {
+              "id": "abbd6295-6330-47d3-b0de-d4053679b714",
+              "name": "domain.malicious",
+              "value": "={{ $json.data.attributes.last_analysis_stats.malicious }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1200,
+        -768
+      ],
+      "id": "5e75e457-b0fa-457c-997b-01d90f31c0c3",
+      "name": "Normalize #2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Normalize').item.json }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a Tier-3 SOC Analyst with 10+ years experience. Score every Wazuh alert on a 0-100 risk scale.\n\nOutput ONLY valid JSON with these exact keys:\n\n{\n  \"risk_score\": 0-100,\n  \"severity_tier\": \"Critical\" | \"High\" | \"Medium\" | \"Low\",\n  \"incident_summary\": \"1-2 sentence short summary\",\n  \"mitre_technique\": \"Txxxx - Technique Name\",\n  \"action\": \"create_jira_ticket\" | \"slack_only\" | \"ignore\",\n  \"jira_priority\": \"Highest\" | \"High\" | \"Medium\" | \"Low\",\n  \"why_this_score\": \"short 1-sentence justification\"\n}\n\nScoring rules (strict):\n- Base = rule.level × 5\n- +20 if MITRE tactic is Persistence, Privilege Escalation, Defense Evasion, or Command & Control\n- +15 if alert storm (many similar alerts from same agent in <10 min)\n- +10 Linux root-level or Windows SYSTEM integrity\n- +25 if commandLine contains reg.exe mscfile hijack, powershell temp .ps1, curl|bash, etc.\n- -30 if clearly benign Penetration test on non-prod agent\n- Final cap at 100\n}\n\nOS context: Windows if \"win\" or \"sysmon\" fields present, otherwise Linux."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -976,
+        -768
+      ],
+      "id": "75b98442-7dec-48f2-9f19-20154590b055",
+      "name": "Risk Scoring"
+    },
+    {
+      "parameters": {
+        "url": "https://bennetsharwin.atlassian.net/rest/api/3/field",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Basic YmVubmV0c2hhcndpbjc2QGdtYWlsLmNvbTpBVEFUVDN4RmZHRjB2NDlaSzBNdHZyWXYwdDRvQmFtM3kwdHllOVlER2tvY2gySlJLbmt1VWtmTjBGLXFKZkpLNXVlT2dGNEFhVDVTZ1VlX1RxMG9zRV9SQUtLbmlCMlVUN0hWZm9keEdDUkM5eGpxYlJndWF5azhZLXdhdUQ5TGNyY055LUJYbU9iRERmeVVmM2dfem1OaVZ5TmE0NkVWazZhRjR3WjNlS1pSdjdpSFhaV2tfNW89NkYxNzY3MUY="
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        512,
+        -1104
+      ],
+      "id": "f07b396e-dc3b-4821-a1fe-bdea0418dd23",
+      "name": "Jira Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize": {
+      "main": [
+        [
+          {
+            "node": "POC Deriver",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Risk Scoring",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Summarization",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Risk scores": {
+      "main": [
+        [
+          {
+            "node": "Summarization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarization": {
+      "main": [
+        [
+          {
+            "node": "Final Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Severity Switch": {
+      "main": [
+        [
+          {
+            "node": "Send Slack Message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Jira Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Slack Message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Jira Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Slack Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Slack Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Normalization": {
+      "main": [
+        [
+          {
+            "node": "Severity Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Jira Ticket": {
+      "main": [
+        []
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarization",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Risk Scoring",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "POC Deriver",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "POC Deriver",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "IP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hash",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Domains",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POC Deriver": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hash": {
+      "main": [
+        [
+          {
+            "node": "Normalize #2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IP": {
+      "main": [
+        [
+          {
+            "node": "Normalize #2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Domains": {
+      "main": [
+        [
+          {
+            "node": "Normalize #2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize #2": {
+      "main": [
+        [
+          {
+            "node": "Risk Scoring",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Risk Scoring": {
+      "main": [
+        [
+          {
+            "node": "Normalize Risk scores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "444af21e-9580-48b0-b248-23d17fd01cef",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a42e4ec596026ed1ea5bd31692d8e7d48f38c69ef4d6e960e0b5338afdbe416"
+  },
+  "id": "flJzEveDE2Lsv2ST",
+  "tags": []
+}
